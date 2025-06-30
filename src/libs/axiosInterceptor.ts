@@ -1,32 +1,29 @@
 "use client";
 
 import { NEXT_PUBLIC_API_URL } from "@/utils/env";
-import axios, { AxiosInstance, AxiosResponse, AxiosError } from "axios";
+import axios, { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import { toast } from "react-toastify";
 
 /**
  * Pre-configured Axios instance with error logging and base URL from env.
  */
 const api: AxiosInstance = axios.create({
     baseURL: NEXT_PUBLIC_API_URL,
+    withCredentials: true,
 });
 
 api.interceptors.response.use(
     (response: AxiosResponse) => {
-        // Only return the data for successful responses
+        if (response.data.message) toast.success(response.data.message);
         return response.data;
     },
-    (error: AxiosError) => {
-        // Log the error but don't throw it
-        console.error("API Error:", {
-            url: error.config?.url,
-            method: error.config?.method,
-            status: error.response?.status,
-            message: error.message,
-            data: error.response?.data,
-        });
-
-        // TODO: Show snackbar notification here in the future
-        // For now, just log the error and don't break the component
+    (
+        error: AxiosError<{
+            message?: string;
+        }>
+    ) => {
+        toast.error(error.response?.data?.message || "Something went wrong.");
+        return Promise.reject(error);
     }
 );
 

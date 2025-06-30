@@ -1,13 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Input } from "@/components/form/Input";
+import axios from "@/libs/axiosInterceptor";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import api from "@/libs/axiosInterceptor";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const signupSchema = z
     .object({
@@ -27,18 +27,18 @@ const signupSchema = z
 type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function SignupPage() {
-    const [apiError, setApiError] = useState<string | null>(null);
+    const router = useRouter();
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        formState: { errors, isSubmitting, isValid },
     } = useForm<SignupFormValues>({
         resolver: zodResolver(signupSchema),
     });
 
     const signupMutation = useMutation({
         mutationFn: async (data: SignupFormValues) => {
-            const res = await api.post("/auth/signup", {
+            const res = await axios.post("/auth/signup", {
                 username: data.username,
                 password: data.password,
                 confirmPassword: data.confirmPassword,
@@ -46,22 +46,16 @@ export default function SignupPage() {
             return res.data;
         },
         onSuccess: () => {
-            setApiError(null);
-            // Redirect to login or further logic here
+            router.push("/login");
         },
     });
 
     const onSubmit = (data: SignupFormValues) => {
-        setApiError(null);
         signupMutation.mutate(data);
     };
 
+    const hasError = !isValid;
     const isLoading = isSubmitting || signupMutation.status === "pending";
-    const hasError =
-        !!errors.username ||
-        !!errors.password ||
-        !!errors.confirmPassword ||
-        !!apiError;
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -102,19 +96,14 @@ export default function SignupPage() {
                     helper={errors.confirmPassword?.message}
                     {...register("confirmPassword")}
                 />
-                {apiError && (
-                    <div className="text-center text-sm text-red-600">
-                        {apiError}
-                    </div>
-                )}
                 <button
                     type="submit"
                     className={`w-full rounded px-4 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60 ${
                         hasError
-                            ? "cursor-not-allowed bg-red-600 hover:bg-red-700 focus:bg-red-700"
+                            ? "cursor-not-allowed bg-red-600 focus:bg-red-700"
                             : "cursor-pointer bg-blue-600 hover:bg-blue-700 focus:bg-blue-700"
                     }`}
-                    disabled={isLoading}
+                    disabled={isLoading || hasError}
                 >
                     {isLoading ? "Creating account..." : "Sign Up"}
                 </button>

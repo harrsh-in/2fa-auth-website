@@ -1,16 +1,21 @@
-import { Input } from "@/components/form/Input";
+"use client";
 
-const Home = () => {
-    return (
-        <div className="m-4">
-            <Input
-                label="Test"
-                placeholder="Test"
-                isError={true}
-                helper="This is an error"
-            />
-        </div>
-    );
-};
+import { useAuth } from "@/components/providers/AuthProvider";
+import ScreenLoader from "@/components/ScreenLoader";
+import { redirect } from "next/navigation";
+import { useEffect } from "react";
 
-export default Home;
+export default function RootPage() {
+    const { isAuthenticated } = useAuth();
+
+    useEffect(() => {
+        if (isAuthenticated) {
+            redirect("/home");
+        } else {
+            redirect("/login");
+        }
+    }, [isAuthenticated]);
+
+    // Show loader while redirecting
+    return <ScreenLoader />;
+}

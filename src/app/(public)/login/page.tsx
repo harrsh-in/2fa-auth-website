@@ -1,13 +1,14 @@
 "use client";
 
-import React, { useState } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
 import { Input } from "@/components/form/Input";
-import { useMutation } from "@tanstack/react-query";
-import api from "@/libs/axiosInterceptor";
+import { IAuthenticatedUser } from "@/components/providers/AuthProvider";
+import axios from "@/libs/axiosInterceptor";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const loginSchema = z.object({
     username: z.string().min(3, { message: "Username is required" }),
@@ -19,33 +20,38 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-    const [apiError, setApiError] = useState<string | null>(null);
+    const router = useRouter();
+    const queryClient = useQueryClient();
     const {
         register,
         handleSubmit,
-        formState: { errors, isSubmitting },
+        reset,
+        formState: { errors, isSubmitting, isValid },
     } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
     });
 
     const loginMutation = useMutation({
         mutationFn: async (data: LoginFormValues) => {
-            const res = await api.post("/auth/login", data);
-            return res.data;
+            const { data: resData } = await axios.post<IAuthenticatedUser>(
+                "/auth/login",
+                data
+            );
+            return resData;
         },
-        onSuccess: () => {
-            setApiError(null);
-            // Redirect or further logic here
+        onSuccess: (data) => {
+            queryClient.setQueryData(["user/whoami"], data);
+            router.push("/home");
         },
     });
 
     const onSubmit = (data: LoginFormValues) => {
-        setApiError(null);
         loginMutation.mutate(data);
+        reset();
     };
 
+    const hasError = !isValid;
     const isLoading = isSubmitting || loginMutation.status === "pending";
-    const hasError = !!errors.username || !!errors.password || !!apiError;
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
@@ -76,19 +82,14 @@ export default function LoginPage() {
                     helper={errors.password?.message}
                     {...register("password")}
                 />
-                {apiError && (
-                    <div className="text-center text-sm text-red-600">
-                        {apiError}
-                    </div>
-                )}
                 <button
                     type="submit"
                     className={`w-full rounded px-4 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60 ${
                         hasError
-                            ? "cursor-not-allowed bg-red-600 hover:bg-red-700 focus:bg-red-700"
+                            ? "cursor-not-allowed bg-red-600 focus:bg-red-700"
                             : "cursor-pointer bg-blue-600 hover:bg-blue-700 focus:bg-blue-700"
                     }`}
-                    disabled={isLoading}
+                    disabled={isLoading || hasError}
                 >
                     {isLoading ? "Logging in..." : "Login"}
                 </button>
