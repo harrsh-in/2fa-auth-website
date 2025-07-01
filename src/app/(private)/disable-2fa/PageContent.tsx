@@ -9,6 +9,7 @@ import { useMutation } from "@tanstack/react-query";
 import { isAxiosError } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -55,9 +56,15 @@ export default function PageContent() {
     const isLoading = isSubmitting || disable2FAMutation.status === "pending";
     const hasError = !isValid;
 
-    // Redirect if 2FA is not enabled
+    // Redirect if 2FA is not enabled (use useEffect to avoid render issues)
+    useEffect(() => {
+        if (!user.twoFactorEnabled) {
+            router.push("/home");
+        }
+    }, [user.twoFactorEnabled, router]);
+
+    // Don't render form if 2FA is not enabled
     if (!user.twoFactorEnabled) {
-        router.push("/home");
         return null;
     }
 
