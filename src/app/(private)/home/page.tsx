@@ -1,13 +1,11 @@
-"use client";
+import { Metadata } from "next";
+import PageContent from "./PageContent";
 
-import { useUser } from "@/components/providers/UserProvider";
+export const metadata: Metadata = {
+    title: "Home | Chat App",
+    description: "Your dashboard and recent conversations.",
+};
 
 export default function HomePage() {
-    const { user } = useUser();
-
-    return (
-        <div>
-            <pre>{JSON.stringify(user, null, 2)}</pre>
-        </div>
-    );
+    return <PageContent />;
 }
