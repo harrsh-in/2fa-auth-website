@@ -22,9 +22,18 @@ const loginSchema = z.object({
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
+interface LoginResponse {
+    requiresTwoFactor?: boolean;
+    loginNonce?: string;
+    id?: string;
+    username?: string;
+    twoFactorEnabled?: boolean;
+}
+
 export default function PageContent() {
     const router = useRouter();
     const { setAuthState } = useAuth();
+
     const {
         register,
         handleSubmit,
@@ -32,20 +41,29 @@ export default function PageContent() {
         formState: { errors, isSubmitting, isValid },
     } = useForm<LoginFormValues>({
         resolver: zodResolver(loginSchema),
+        defaultValues: {
+            username: "",
+            password: "",
+        },
     });
 
     const loginMutation = useMutation({
         mutationFn: async (data: LoginFormValues) => {
-            const { data: resData } = await axios.post<IAuthenticatedUser>(
+            const { data: resData } = await axios.post<LoginResponse>(
                 "/auth/login",
                 data
             );
             return resData;
         },
         onSuccess: (data) => {
-            setAuthState(data);
-            reset();
-            router.push("/home");
+            if (data.requiresTwoFactor && data.loginNonce) {
+                sessionStorage.setItem("login_nonce", data.loginNonce);
+                router.push("/login/verify-2fa");
+            } else if (data.id && data.username) {
+                setAuthState(data as IAuthenticatedUser);
+                reset();
+                router.push("/home");
+            }
         },
     });
 

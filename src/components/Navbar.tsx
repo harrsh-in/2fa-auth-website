@@ -47,6 +47,14 @@ export default function Navbar() {
                         <span className="text-sm text-gray-700">
                             Welcome, {user.username}
                         </span>
+                        {!user.twoFactorEnabled && (
+                            <button
+                                onClick={() => router.push("/setup-2fa")}
+                                className="rounded bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 focus:bg-green-700"
+                            >
+                                Setup 2FA
+                            </button>
+                        )}
                         <button
                             onClick={handleLogout}
                             disabled={isLoading}

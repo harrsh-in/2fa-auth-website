@@ -14,6 +14,7 @@ import ScreenLoader from "../ScreenLoader";
 export interface IAuthenticatedUser {
     _id: string;
     username: string;
+    twoFactorEnabled: boolean;
 }
 
 interface IUnauthenticatedUser {
