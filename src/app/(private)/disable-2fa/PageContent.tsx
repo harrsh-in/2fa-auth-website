@@ -36,7 +36,7 @@ export default function PageContent() {
 
     const disable2FAMutation = useMutation({
         mutationFn: async (data: DisableFormValues) => {
-            await axios.post("/auth/2fa/disable", data);
+            await axios.post("/auth/totp/disable", data);
         },
         onSuccess: () => {
             // Update user state to reflect 2FA is now disabled

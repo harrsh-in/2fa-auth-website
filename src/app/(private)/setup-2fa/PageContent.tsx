@@ -42,7 +42,7 @@ export default function PageContent() {
     const setup2FAMutation = useMutation({
         mutationFn: async () => {
             const { data } =
-                await axios.post<Setup2FAResponse>("/auth/2fa/setup");
+                await axios.post<Setup2FAResponse>("/auth/totp/setup");
             return data;
         },
         onSuccess: (data) => {
@@ -53,7 +53,7 @@ export default function PageContent() {
 
     const verify2FAMutation = useMutation({
         mutationFn: async (data: VerifyFormValues) => {
-            await axios.post("/auth/2fa/verify", data);
+            await axios.post("/auth/totp/verify", data);
         },
         onSuccess: () => {
             // Update user state to reflect 2FA is now enabled
