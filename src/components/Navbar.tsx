@@ -47,18 +47,38 @@ export default function Navbar() {
                         <span className="text-sm text-gray-700">
                             Welcome, {user.username}
                         </span>
-                        {!user.twoFactorEnabled && (
-                            <button
-                                onClick={() => router.push("/setup-2fa")}
-                                className="rounded bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 focus:bg-green-700"
-                            >
-                                Setup 2FA
-                            </button>
+
+                        {/* 2FA Status and Actions */}
+                        {user.twoFactorEnabled ? (
+                            <div className="flex items-center space-x-2">
+                                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                                    2FA Enabled
+                                </span>
+                                <button
+                                    onClick={() => router.push("/disable-2fa")}
+                                    className="rounded bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 focus:bg-red-700"
+                                >
+                                    Disable 2FA
+                                </button>
+                            </div>
+                        ) : (
+                            <div className="flex items-center space-x-2">
+                                <span className="inline-flex items-center rounded-full bg-yellow-100 px-2.5 py-0.5 text-xs font-medium text-yellow-800">
+                                    2FA Disabled
+                                </span>
+                                <button
+                                    onClick={() => router.push("/setup-2fa")}
+                                    className="rounded bg-green-600 px-3 py-2 text-sm font-medium text-white hover:bg-green-700 focus:bg-green-700"
+                                >
+                                    Setup 2FA
+                                </button>
+                            </div>
                         )}
+
                         <button
                             onClick={handleLogout}
                             disabled={isLoading}
-                            className="rounded bg-red-600 px-3 py-2 text-sm font-medium text-white hover:bg-red-700 focus:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="rounded bg-gray-600 px-3 py-2 text-sm font-medium text-white hover:bg-gray-700 focus:bg-gray-700 disabled:cursor-not-allowed disabled:opacity-60"
                         >
                             {isLoading ? "Logging out..." : "Logout"}
                         </button>
