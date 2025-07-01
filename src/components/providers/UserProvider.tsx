@@ -9,9 +9,9 @@ export const UserContext = createContext<{
 }>({} as { user: IAuthenticatedUser });
 
 export const UserProvider = ({ children }: PropsWithChildren) => {
-    const { isAuthenticated, user: authUser } = useAuth();
+    const { user: authUser } = useAuth();
 
-    if (!isAuthenticated || !authUser) {
+    if (!authUser) {
         return <ScreenLoader />;
     }
 

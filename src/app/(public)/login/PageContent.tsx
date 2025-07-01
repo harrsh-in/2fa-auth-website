@@ -1,10 +1,13 @@
 "use client";
 
 import { Input } from "@/components/form/Input";
-import { IAuthenticatedUser } from "@/components/providers/AuthProvider";
+import {
+    IAuthenticatedUser,
+    useAuth,
+} from "@/components/providers/AuthProvider";
 import axios from "@/libs/axiosInterceptor";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -21,7 +24,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function PageContent() {
     const router = useRouter();
-    const queryClient = useQueryClient();
+    const { setAuthState } = useAuth();
     const {
         register,
         handleSubmit,
@@ -40,7 +43,7 @@ export default function PageContent() {
             return resData;
         },
         onSuccess: (data) => {
-            queryClient.setQueryData(["user/whoami"], data);
+            setAuthState(data);
             reset();
             router.push("/home");
         },
