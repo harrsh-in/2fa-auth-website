@@ -48,6 +48,14 @@ export default function Navbar() {
                             Welcome, {user.username}
                         </span>
 
+                        {/* Navigation Links */}
+                        <button
+                            onClick={() => router.push("/manage-passkeys")}
+                            className="rounded bg-indigo-600 px-3 py-2 text-sm font-medium text-white hover:bg-indigo-700 focus:bg-indigo-700"
+                        >
+                            Manage Passkeys
+                        </button>
+
                         {/* 2FA Status and Actions */}
                         {user.twoFactorEnabled ? (
                             <div className="flex items-center space-x-2">

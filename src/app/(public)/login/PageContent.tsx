@@ -114,6 +114,41 @@ export default function PageContent() {
                 >
                     {isLoading ? "Logging in..." : "Login"}
                 </button>
+                <div className="text-center">
+                    <div className="relative">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300" />
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="bg-white px-2 text-gray-500">
+                                Or
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <Link
+                    href="/login/passkey"
+                    className="block w-full rounded-lg border border-blue-300 bg-blue-50 px-4 py-3 text-center text-sm font-semibold text-blue-700 hover:bg-blue-100"
+                >
+                    <div className="flex items-center justify-center space-x-2">
+                        <svg
+                            className="h-4 w-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-3a1 1 0 011-1h2.586l6.414-6.414a6 6 0 019 0z"
+                            />
+                        </svg>
+                        <span>Sign in with Passkey</span>
+                    </div>
+                </Link>
+
                 <p className="text-center text-sm text-gray-600">
                     Don&apos;t have an account?{" "}
                     <Link
