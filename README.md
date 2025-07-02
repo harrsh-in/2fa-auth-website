@@ -340,23 +340,6 @@ const response = await fetch("/api/auth/passkey/registration/verify", {
 - **Form Validation** - Real-time client-side validation
 - **API Response Validation** - Server response type checking
 
-## 🧪 Testing Strategy
-
-### Unit Testing (Future Implementation)
-
-```bash
-npm run test         # Run unit tests
-npm run test:watch   # Run tests in watch mode
-npm run test:coverage # Generate coverage report
-```
-
-### Testing Stack (Recommended)
-
-- **Jest** - JavaScript testing framework
-- **React Testing Library** - Component testing utilities
-- **MSW** - API mocking for integration tests
-- **Playwright** - End-to-end testing
-
 ## 🚀 Deployment
 
 ### Vercel (Recommended)
@@ -404,16 +387,6 @@ const API_URL = "http://localhost:8000/api/v1";
 const API_URL = "https://your-production-api.com/api/v1";
 ```
 
-### Real-time Communication
-
-```typescript
-// HTTP API communication using axios
-    auth: {
-        token: localStorage.getItem("accessToken"),
-    },
-});
-```
-
 ## 📝 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
@@ -423,10 +396,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
 3. Follow the code style guidelines
-4. Add tests for new functionality
-5. Commit your changes (`git commit -m 'Add some amazing feature'`)
-6. Push to the branch (`git push origin feature/amazing-feature`)
-7. Open a Pull Request
+4. Commit your changes (`git commit -m 'Add some amazing feature'`)
+5. Push to the branch (`git push origin feature/amazing-feature`)
+6. Open a Pull Request
 
 ## 🐛 Troubleshooting
 
