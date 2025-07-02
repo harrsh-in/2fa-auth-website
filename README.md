@@ -144,7 +144,7 @@ src/
 
 ## 🔗 API Integration
 
-The website communicates with the backend server through RESTful APIs and WebSocket connections.
+The website communicates with the backend server through RESTful APIs.
 
 ### Authentication Flow
 
@@ -370,8 +370,7 @@ const API_URL = "https://your-production-api.com/api";
 ### Real-time Communication
 
 ```typescript
-// Socket.IO connection
-const socket = io(API_URL, {
+// HTTP API communication using axios
     auth: {
         token: localStorage.getItem("accessToken"),
     },
