@@ -25,16 +25,19 @@ type AuthResponse = IAuthenticatedUser | IUnauthenticatedUser;
 
 export const AuthContext = createContext<{
     isAuthenticated: boolean;
+    isLoading: boolean;
     user?: IAuthenticatedUser;
     setAuthState: (user?: IAuthenticatedUser) => void;
 }>({
     isAuthenticated: false,
+    isLoading: true,
     setAuthState: () => {},
 });
 
 export const AuthProvider = ({ children }: PropsWithChildren) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [user, setUser] = useState<IAuthenticatedUser | undefined>(undefined);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
 
     const { data, isError, status } = useQuery<AuthResponse>({
         queryKey: ["user/whoami"],
@@ -61,8 +64,16 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
             const authenticated = !("isUnauthenticated" in data);
             setIsAuthenticated(authenticated);
             setUser(authenticated ? data : undefined);
+            setIsLoading(false);
         }
     }, [data]);
+
+    // Handle error state
+    useEffect(() => {
+        if (isError) {
+            setIsLoading(false);
+        }
+    }, [isError]);
 
     // Cleanup on unmount
     useEffect(() => {
@@ -92,6 +103,7 @@ export const AuthProvider = ({ children }: PropsWithChildren) => {
         <AuthContext.Provider
             value={{
                 isAuthenticated,
+                isLoading,
                 user,
                 setAuthState,
             }}

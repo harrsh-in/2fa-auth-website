@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import PageContent from "./PageContent";
 
 export const metadata: Metadata = {
-    title: "Login | Chat App",
+    title: "Login | 2FA Auth",
     description: "Login to your account.",
 };
 

@@ -7,15 +7,15 @@ import { redirect } from "next/navigation";
 import { PropsWithChildren, useEffect } from "react";
 
 export default function PrivateLayout({ children }: PropsWithChildren) {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!isLoading && !isAuthenticated) {
             redirect("/login");
         }
-    }, [isAuthenticated]);
+    }, [isAuthenticated, isLoading]);
 
-    if (!isAuthenticated) {
+    if (isLoading || !isAuthenticated) {
         return null;
     }
 

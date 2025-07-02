@@ -39,7 +39,7 @@ export default function Navbar() {
                 <div className="flex h-16 items-center justify-between">
                     <div className="flex items-center">
                         <h1 className="text-xl font-semibold text-gray-900">
-                            Chat App
+                            2FA Auth
                         </h1>
                     </div>
 

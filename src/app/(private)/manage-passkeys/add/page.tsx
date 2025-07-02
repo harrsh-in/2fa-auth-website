@@ -2,7 +2,7 @@ import { Metadata } from "next";
 import PageContent from "./PageContent";
 
 export const metadata: Metadata = {
-    title: "Add Passkey | Chat App",
+    title: "Add Passkey | 2FA Auth",
     description: "Add a new passkey for passwordless authentication.",
 };
 

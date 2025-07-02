@@ -1,1 +1,1 @@
-# Chat App (Website)
+# 2FA Auth (Website)
