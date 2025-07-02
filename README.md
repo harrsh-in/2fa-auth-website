@@ -6,10 +6,10 @@ A modern, responsive React application built with Next.js 15 and React 19, provi
 
 ### 🔐 Authentication Flows
 
-- **Email/Password Login** - Traditional authentication with secure form validation
+- **Username/Password Login** - Traditional authentication with secure form validation
 - **TOTP Authentication** - Google Authenticator, Authy, and other authenticator app support
 - **WebAuthn/Passkeys** - Modern passwordless authentication with biometrics and security keys
-- **Registration/Signup** - User account creation with email verification
+- **Registration/Signup** - User account creation with username and password
 
 ### 🎨 User Experience
 
@@ -97,7 +97,7 @@ npm start
 #### Public Routes (`/`)
 
 - **Landing Page** (`/`) - Welcome page and app introduction
-- **Login** (`/login`) - Email/password authentication
+- **Login** (`/login`) - Username/password authentication
     - **Passkey Login** (`/login/passkey`) - WebAuthn authentication
     - **2FA Verification** (`/login/verify-2fa`) - TOTP token verification
 - **Signup** (`/signup`) - User registration
@@ -110,36 +110,72 @@ npm start
 - **Passkey Management** (`/manage-passkeys`) - View and manage passkeys
     - **Add Passkey** (`/manage-passkeys/add`) - Register new passkey
 
-### Component Architecture
+### Project Structure
 
 ```
-src/
-├── app/                    # Next.js App Router pages
-│   ├── (private)/         # Protected routes with authentication
-│   │   ├── layout.tsx     # Private layout with auth check
-│   │   ├── home/          # Dashboard page
-│   │   ├── setup-2fa/     # TOTP setup page
-│   │   ├── disable-2fa/   # TOTP disable page
-│   │   └── manage-passkeys/ # Passkey management pages
-│   ├── (public)/          # Public routes
-│   │   ├── layout.tsx     # Public layout
-│   │   ├── login/         # Login pages and flows
-│   │   └── signup/        # Registration page
-│   ├── globals.css        # Global styles and Tailwind imports
-│   └── layout.tsx         # Root layout with providers
-├── components/            # Reusable UI components
-│   ├── form/              # Form-specific components
-│   │   └── Input.tsx      # Custom input component
-│   ├── providers/         # React context providers
-│   │   ├── AuthProvider.tsx    # Authentication context
-│   │   ├── UserProvider.tsx    # User data context
-│   │   └── index.tsx           # Combined providers
-│   ├── Navbar.tsx         # Navigation component
-│   └── ScreenLoader.tsx   # Loading screen component
-├── libs/                  # Core libraries and configurations
-│   └── axiosInterceptor.ts # Axios configuration with auth
-└── utils/                 # Utility functions
-    └── env.ts             # Environment variable validation
+chat-app-website/
+├── .gitignore                     # Git ignore patterns
+├── .prettierrc                    # Prettier configuration
+├── LICENSE                        # MIT License file
+├── README.md                      # Project documentation
+├── eslint.config.mjs              # ESLint configuration
+├── next-env.d.ts                  # Next.js TypeScript declarations
+├── next.config.ts                 # Next.js configuration
+├── package-lock.json              # NPM lockfile
+├── package.json                   # NPM package configuration
+├── postcss.config.mjs             # PostCSS configuration
+├── tsconfig.json                  # TypeScript configuration
+├── public/                        # Static assets
+└── src/                           # Source code directory
+    ├── app/                       # Next.js App Router pages
+    │   ├── (private)/            # Protected routes with authentication
+    │   │   ├── layout.tsx        # Private layout with auth check
+    │   │   ├── disable-2fa/      # TOTP disable page
+    │   │   │   ├── page.tsx      # Disable 2FA page
+    │   │   │   └── PageContent.tsx # Disable 2FA content component
+    │   │   ├── home/             # Dashboard page
+    │   │   │   ├── page.tsx      # Home page
+    │   │   │   └── PageContent.tsx # Home content component
+    │   │   ├── manage-passkeys/  # Passkey management pages
+    │   │   │   ├── page.tsx      # Manage passkeys page
+    │   │   │   ├── PageContent.tsx # Manage passkeys content
+    │   │   │   └── add/          # Add passkey page
+    │   │   │       ├── page.tsx  # Add passkey page
+    │   │   │       └── PageContent.tsx # Add passkey content
+    │   │   └── setup-2fa/        # TOTP setup page
+    │   │       ├── page.tsx      # Setup 2FA page
+    │   │       └── PageContent.tsx # Setup 2FA content component
+    │   ├── (public)/             # Public routes
+    │   │   ├── layout.tsx        # Public layout
+    │   │   ├── login/            # Login pages and flows
+    │   │   │   ├── page.tsx      # Login page
+    │   │   │   ├── PageContent.tsx # Login content component
+    │   │   │   ├── passkey/      # Passkey login
+    │   │   │   │   ├── page.tsx  # Passkey login page
+    │   │   │   │   └── PageContent.tsx # Passkey login content
+    │   │   │   └── verify-2fa/   # 2FA verification
+    │   │   │       ├── page.tsx  # 2FA verify page
+    │   │   │       └── PageContent.tsx # 2FA verify content
+    │   │   └── signup/           # Registration page
+    │   │       ├── page.tsx      # Signup page
+    │   │       └── PageContent.tsx # Signup content component
+    │   ├── favicon.ico           # Site favicon
+    │   ├── globals.css           # Global styles and Tailwind imports
+    │   ├── layout.tsx            # Root layout with providers
+    │   └── page.tsx              # Landing page
+    ├── components/               # Reusable UI components
+    │   ├── form/                 # Form-specific components
+    │   │   └── Input.tsx         # Custom input component
+    │   ├── providers/            # React context providers
+    │   │   ├── AuthProvider.tsx  # Authentication context
+    │   │   ├── UserProvider.tsx  # User data context
+    │   │   └── index.tsx         # Combined providers
+    │   ├── Navbar.tsx            # Navigation component
+    │   └── ScreenLoader.tsx      # Loading screen component
+    ├── libs/                     # Core libraries and configurations
+    │   └── axiosInterceptor.ts   # Axios configuration with auth
+    └── utils/                    # Utility functions
+        └── env.ts                # Environment variable validation
 ```
 
 ## 🔗 API Integration
@@ -151,37 +187,37 @@ The website communicates with the backend server through RESTful APIs.
 1. **Login Process**:
 
     ```typescript
-    // Email/Password login
-    POST /api/auth/login
-    → Returns: { requires2FA: boolean, tempToken?: string, accessToken?: string }
+    // Username/Password login
+    POST /auth/login
+    → Returns: { requiresTwoFactor: boolean, loginNonce?: string, id?: string, username?: string, twoFactorEnabled?: boolean }
 
     // If 2FA required
-    POST /api/auth/login/2fa
-    → Returns: { accessToken: string, user: UserData }
+    POST /auth/login/2fa
+    → Returns: { id: string, username: string, twoFactorEnabled: boolean }
     ```
 
 2. **TOTP Setup**:
 
     ```typescript
     // Get setup data
-    POST /api/auth/totp/setup
-    → Returns: { secret: string, qrCode: string }
+    POST /auth/totp/setup
+    → Returns: { otpauthUri: string }
 
     // Verify setup
-    POST /api/auth/totp/verify
-    → Returns: { success: boolean }
+    POST /auth/totp/verify
+    → Returns: { success: boolean, message: string }
     ```
 
 3. **Passkey Registration**:
 
     ```typescript
     // Get registration options
-    GET /api/auth/passkey/registration/options
-    → Returns: WebAuthn creation options
+    POST /auth/passkey/registration/options
+    → Returns: { options: WebAuthnOptions, label: string }
 
     // Verify registration
-    POST /api/auth/passkey/registration/verify
-    → Returns: { success: boolean }
+    POST /auth/passkey/registration/verify
+    → Returns: { success: boolean, message: string, data: PasskeyInfo }
     ```
 
 ### State Management
@@ -231,8 +267,10 @@ interface AuthContextType {
 ```typescript
 // Example Zod schema
 const loginSchema = z.object({
-    email: z.string().email("Invalid email address"),
-    password: z.string().min(8, "Password must be at least 8 characters"),
+    username: z.string().min(3, { message: "Username is required" }),
+    password: z
+        .string()
+        .min(6, { message: "Password must be at least 6 characters" }),
 });
 ```
 
@@ -260,11 +298,10 @@ npm run format       # Format code with Prettier
 
 ```env
 # Required
-NEXT_PUBLIC_API_URL=http://localhost:8000/api
+NEXT_PUBLIC_API_URL=http://localhost:8000/api/v1
 
 # Optional Development
 NODE_ENV=development
-NEXT_PUBLIC_DEBUG=true
 ```
 
 ### Build Configuration
@@ -349,7 +386,7 @@ CMD ["npm", "start"]
 ### Environment Variables for Production
 
 ```env
-NEXT_PUBLIC_API_URL=https://your-api-domain.com/api
+NEXT_PUBLIC_API_URL=https://your-api-domain.com/api/v1
 NODE_ENV=production
 ```
 
@@ -361,10 +398,10 @@ The frontend automatically configures API requests based on the environment:
 
 ```typescript
 // Development
-const API_URL = "http://localhost:8000/api";
+const API_URL = "http://localhost:8000/api/v1";
 
 // Production
-const API_URL = "https://your-production-api.com/api";
+const API_URL = "https://your-production-api.com/api/v1";
 ```
 
 ### Real-time Communication
@@ -379,7 +416,7 @@ const API_URL = "https://your-production-api.com/api";
 
 ## 📝 License
 
-This project is licensed under the ISC License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🤝 Contributing
 
